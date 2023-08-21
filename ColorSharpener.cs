@@ -11,26 +11,65 @@ namespace PlasticColorDistributor
     // http://www.usrsb.in/picking-colors.html
     internal class ColorSharpener
     {
+        public int TotalColors => _colors.Count;
+
         private List<Color> _colors;
         private ColorDistance _distance;
+        private int _randomRestarts;
+        private Random _random;
+        private byte[] _randomColorBuffer;
 
-        public ColorSharpener(ColorDistance distance, List<Color> colors)
+        public ColorSharpener(ColorDistance distance, List<Color> colors, int randomRestarts)
         {
             _colors = colors;
             _distance = distance;
+            _randomRestarts = randomRestarts;
+            _random = new Random();
+            _randomColorBuffer = new byte[3];
         }
 
-        public Color FindNextBestColor(Color current)
+        public Color GetColor(int i)
         {
-            while (true)
+            return _colors[i];
+        }
+        public void InsertNextBestColor()
+        {
+            _colors.Add(FindNextBestColor());
+        }
+        private Color FindNextBestColor()
+        {
+            if (_randomRestarts <= 1)
             {
-                Color next = FindNextBestNeighbor(current);
-                if (next == current)
-                {
-                    return current;
-                }
-                current = next;
+                return FindNextBestColor(GetRandomColor());
             }
+            List<Color> colors = new List<Color>();
+            for (int i = 0; i < _randomRestarts; i++)
+            {
+                Color randomColor = GetRandomColor();
+                Color nextBest = FindNextBestColor(randomColor);
+                colors.Add(nextBest);
+            }
+            return colors.Select(RatingOfColor).MaxBy(Rating).Color;
+        }
+        private Color GetRandomColor()
+        {
+            _random.NextBytes(_randomColorBuffer);
+            return Color.FromArgb(_randomColorBuffer[0], _randomColorBuffer[1], _randomColorBuffer[2]);
+        }
+
+        private Color FindNextBestColor(Color current)
+        {
+            Color next;
+            do
+            {
+                next = FindNextBestNeighbor(current);
+                if (current != next)
+                {
+                    current = next;
+                }
+            }
+            while (current != next);
+            return current;
         }
         /// <summary>
         /// If no neighbor is better than the argument, the argument value is returned
@@ -66,22 +105,20 @@ namespace PlasticColorDistributor
             {
                 return 0;
             }
-            float minimum = _distance.Get(color, _colors[0]);
-            for (int i = 1; i < _colors.Count; i++)
+            float DistanceOfArgumentToOtherColor(Color otherColor)
             {
-                float current = _distance.Get(color, _colors[i]);
-                minimum = MathF.Min(minimum, current);
+                return _distance.Get(color, otherColor);
             }
-            return minimum;
+            return _colors.Select(DistanceOfArgumentToOtherColor).Min();
         }
         private List<Color> GetNeighbors(Color color)
         {
             List<Color> neighbors = new List<Color>();
-            for (int rOffset = 0; rOffset < 3; rOffset++)
+            for (int rOffset = -1; rOffset <= 1; rOffset++)
             {
-                for (int gOffset = 0; gOffset < 3; gOffset++)
+                for (int gOffset = -1; gOffset <= 1; gOffset++)
                 {
-                    for (int bOffset = 0; bOffset < 3; bOffset++)
+                    for (int bOffset = -1; bOffset <= 1; bOffset++)
                     {
                         if (rOffset == 0 && gOffset == 0 && bOffset == 0)
                         {

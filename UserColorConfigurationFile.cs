@@ -10,6 +10,8 @@ namespace PlasticColorDistributor
 {
     internal class UserColorConfigurationFile
     {
+        public int TotalUsers => _configuration.TotalUsers;
+
         private string _filePath;
         private UserColorConfiguration _configuration;
 

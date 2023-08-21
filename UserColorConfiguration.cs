@@ -9,6 +9,8 @@ namespace PlasticColorDistributor
 {
     internal class UserColorConfiguration
     {
+        public int TotalUsers => _users.Count;
+
         private List<UserColor> _users = new List<UserColor>();
 
         public void Add(string userString)

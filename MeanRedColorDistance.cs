@@ -41,6 +41,4 @@ namespace PlasticColorDistributor
             return a.B - b.B;
         }
     }
-
-}
 }

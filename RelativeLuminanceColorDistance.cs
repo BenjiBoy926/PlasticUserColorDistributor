@@ -12,15 +12,15 @@ namespace PlasticColorDistributor
     // https://medium.muz.li/the-science-of-color-contrast-an-expert-designers-guide-33e84c41d156
     internal class RelativeLuminanceColorDistance : ColorDistance
     {
-        private float MaxColorComponentValue = byte.MaxValue;
+        private const float MaxColorComponentValue = byte.MaxValue;
         private const float RedLuminanceContribution = 0.2126f;
         private const float GreenLuminanceContribution = 0.7152f;
         private const float BlueLuminanceContribution = 0.0722f;
 
         public override float Get(Color color1, Color color2)
         {
-            float luminance1 = Luminance(color1);
-            float luminance2 = Luminance(color2);
+            float luminance1 = Luminance(color1) + 0.05f;
+            float luminance2 = Luminance(color2) + 0.05f;
             if (luminance1 > luminance2)
             {
                 return luminance1 / luminance2;
