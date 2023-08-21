@@ -20,7 +20,7 @@ namespace PlasticColorDistributor
             _distance = distance;
         }
 
-        private Color FindNextBestColor(Color current)
+        public Color FindNextBestColor(Color current)
         {
             while (true)
             {

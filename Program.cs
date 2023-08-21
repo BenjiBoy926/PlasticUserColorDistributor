@@ -3,4 +3,9 @@ using System.Drawing;
 
 const string ConfigurationFilePath = "C:\\Users\\HulaHut\\AppData\\Local\\plastic4\\branchexplorerusercolors.conf";
 
-UserColorConfigurationFile file = new UserColorConfigurationFile(ConfigurationFilePath);
+EuclidianColorDistance colorDistance = new EuclidianColorDistance();
+List<Color> initialColors = new List<Color>()
+{
+    Color.White
+};
+ColorSharpener sharpener = new ColorSharpener(colorDistance, initialColors);
