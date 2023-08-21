@@ -3,7 +3,8 @@ using System.Drawing;
 
 const string ConfigurationFilePath = "C:\\Users\\HulaHut\\AppData\\Local\\plastic4\\branchexplorerusercolors.conf";
 const string EveryonesEmailServer = "@owlchemylabs.com";
-const int RandomRestartsForColorOptimization = 25;
+const int RandomRestartsForSearchPick = 10;
+const int RandomRestartsForColorPick = 25;
 
 List<Color> colors = new List<Color>()
 {
@@ -41,20 +42,17 @@ string[] importantUsers = new string[]
 
 UserColorConfigurationFile configurationFile = new UserColorConfigurationFile(ConfigurationFilePath);
 ColorDistance colorDistance = new RelativeLuminanceColorDistance();
-ColorSharpener sharpener = new ColorSharpener(colorDistance, colors, RandomRestartsForColorOptimization);
+OptimalColorSet colorSet = new OptimalColorSet(colors, colorDistance, RandomRestartsForSearchPick, RandomRestartsForColorPick);
 int firstNonImportantColorIndex = Math.Min(colors.Count, importantUsers.Length);
 
 for (int i = 0; i < firstNonImportantColorIndex; i++)
 {
     configurationFile.SetColorOfUser(colors[i], importantUsers[i] + EveryonesEmailServer);
 }
-while (sharpener.TotalColors < configurationFile.TotalUsers)
-{
-    sharpener.InsertNextBestColor();
-}
+colorSet.AddOptimalColors(configurationFile.TotalUsers - colors.Count);
 for (int i = firstNonImportantColorIndex; i < configurationFile.TotalUsers; i++)
 {
-    Color color = sharpener.GetColor(i);
+    Color color = colorSet.GetColor(i);
     configurationFile.SetColorOfNextUser(color);
 }
 configurationFile.Write();

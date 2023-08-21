@@ -9,8 +9,9 @@ namespace PlasticColorDistributor
 {
     // Credits: https://stackoverflow.com/questions/58572030/algorithm-to-successively-deliver-colors-of-maximum-contrast
     // http://www.usrsb.in/picking-colors.html
-    internal class ColorSharpener
+    internal class ColorHillClimbSearch
     {
+        public IReadOnlyList<Color> Colors => _colors;
         public int TotalColors => _colors.Count;
 
         private List<Color> _colors;
@@ -19,7 +20,7 @@ namespace PlasticColorDistributor
         private Random _random;
         private byte[] _randomColorBuffer;
 
-        public ColorSharpener(ColorDistance distance, List<Color> colors, int randomRestarts)
+        public ColorHillClimbSearch(List<Color> colors, ColorDistance distance, int randomRestarts)
         {
             _colors = colors;
             _distance = distance;
@@ -32,7 +33,11 @@ namespace PlasticColorDistributor
         {
             return _colors[i];
         }
-        // Another possible improvement: perform x insertions, randomly restart, rate all the configurations and pick the best one
+
+        public SearchRating GetRating()
+        {
+            return new SearchRating(this, _colors.Select(RatingOfColor).MinBy(Rating).Rating);
+        }
         public void InsertNextBestColor()
         {
             _colors.Add(FindNextBestColor());
