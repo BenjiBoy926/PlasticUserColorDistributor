@@ -9,6 +9,8 @@ namespace PlasticColorDistributor
         private static readonly Regex LineSplitter = new Regex(Separator);
         private const int FieldCount = 4;
 
+        public string Username => _username;
+
         private string _username;
         private string _clickMessage;
         private Color _color;

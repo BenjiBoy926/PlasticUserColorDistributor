@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Drawing;
-using System.Linq;
-using System.Reflection.PortableExecutable;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Drawing;
 
 namespace PlasticColorDistributor
 {
@@ -14,6 +8,7 @@ namespace PlasticColorDistributor
 
         private string _filePath;
         private UserColorConfiguration _configuration;
+        private bool[] _usersWithSetColors;
 
         public UserColorConfigurationFile(string filePath) 
         {
@@ -23,6 +18,7 @@ namespace PlasticColorDistributor
             {
                 AddLine(line);
             }
+            _usersWithSetColors = new bool[_configuration.TotalUsers];
         }
         private void AddLine(string line)
         {
@@ -37,10 +33,45 @@ namespace PlasticColorDistributor
             }
         }
 
-        public void SetColorOfUser(Color color, int userIndex)
+        public void SetColorOfNextUser(Color color)
+        {
+            int index = GetIndexOfNextUser();
+            if (index >= 0)
+            {
+                SetColorOfUser(color, index);
+            }
+        }
+        private int GetIndexOfNextUser()
+        {
+            for (int i = 0; i < _usersWithSetColors.Length; i++)
+            {
+                if (!_usersWithSetColors[i])
+                {
+                    return i;
+                }
+            }
+            return -1;
+        }
+
+        public void SetColorOfUser(Color color, string username)
+        {
+            int index = IndexOfUser(username);
+            if (index >= 0)
+            {
+                SetColorOfUser(color, index);
+            }
+        }
+        public int IndexOfUser(string username)
+        {
+            return _configuration.IndexOfUser(username);
+        }
+
+        private void SetColorOfUser(Color color, int userIndex)
         {
             _configuration.SetColorOfUser(color, userIndex);
+            _usersWithSetColors[userIndex] = true;
         }
+
         public void Write()
         {
             File.WriteAllText(_filePath, _configuration.ToParsableString());

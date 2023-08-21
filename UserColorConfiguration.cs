@@ -1,9 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Drawing;
-using System.Linq;
+﻿using System.Drawing;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace PlasticColorDistributor
 {
@@ -22,6 +18,14 @@ namespace PlasticColorDistributor
             _users.Add(userColor);
         }
 
+        public int IndexOfUser(string username)
+        {
+            bool WithName(UserColor userColor)
+            {
+                return userColor.Username == username;
+            }
+            return _users.FindIndex(WithName);
+        }
         public void SetColorOfUser(Color color, int userIndex)
         {
             UserColor user = _users[userIndex];
