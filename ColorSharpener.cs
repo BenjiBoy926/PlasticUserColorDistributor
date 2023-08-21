@@ -32,6 +32,7 @@ namespace PlasticColorDistributor
         {
             return _colors[i];
         }
+        // Another possible improvement: perform x insertions, randomly restart, rate all the configurations and pick the best one
         public void InsertNextBestColor()
         {
             _colors.Add(FindNextBestColor());
