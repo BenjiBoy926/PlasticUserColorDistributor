@@ -26,18 +26,11 @@ List<Color> colors = new List<Color>()
 };
 string[] importantUsers = new string[]
 {
-    "alexcovert",
-    "bogdanrybak",
-    "chrishall",
     "codeyhuntting",
-    "dalenewcomb",
-    "davidbusch",
-    "graeme",
-    "itzeljuarez",
-    "jasongordy",
-    "kellyjohnson",
-    "marchuet",
-    "rachelemery",
+    "clairerice",
+    "ryanlandis",
+    "tylerfrick",
+    "vincentlasane"
 };
 
 UserColorConfigurationFile configurationFile = new UserColorConfigurationFile(ConfigurationFilePath);
@@ -45,14 +38,23 @@ ColorDistance colorDistance = new RelativeLuminanceColorDistance();
 OptimalColorSet colorSet = new OptimalColorSet(colors, colorDistance, RandomRestartsForSearchPick, RandomRestartsForColorPick);
 int firstNonImportantColorIndex = Math.Min(colors.Count, importantUsers.Length);
 
+Console.WriteLine("Setting colors of important users...");
 for (int i = 0; i < firstNonImportantColorIndex; i++)
 {
     configurationFile.SetColorOfUser(colors[i], importantUsers[i] + EveryonesEmailServer);
 }
+
+Console.WriteLine("Creating colors for other users...");
 colorSet.AddOptimalColors(configurationFile.TotalUsers - colors.Count);
+
+Console.WriteLine("Setting colors for all other users...");
 for (int i = firstNonImportantColorIndex; i < configurationFile.TotalUsers; i++)
 {
     Color color = colorSet.GetColor(i);
     configurationFile.SetColorOfNextUser(color);
 }
+
+Console.WriteLine("Writing the results to the configuration file...");
 configurationFile.Write();
+
+Console.WriteLine("Finished!");

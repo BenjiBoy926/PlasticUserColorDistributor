@@ -20,11 +20,11 @@ namespace PlasticColorDistributor
 
         public int IndexOfUser(string username)
         {
-            bool WithName(UserColor userColor)
+            bool UserHasName(UserColor userColor)
             {
                 return userColor.Username == username;
             }
-            return _users.FindIndex(WithName);
+            return _users.FindIndex(UserHasName);
         }
         public void SetColorOfUser(Color color, int userIndex)
         {
